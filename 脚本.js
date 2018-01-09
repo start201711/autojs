@@ -47,7 +47,7 @@ toastLog("成功进入");
 sleep(3000);
 
 
-takeMyself2();
+takeMyself();
 toastLog("收取自己的能量完毕");
 sleep(5000);
 
