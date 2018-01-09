@@ -10,7 +10,9 @@
 //4.申请截图时不需要点击立即开始（可能我是5.1的原因，因为系统是5.1，不能设置不再显示，否则直接崩）
 //5.这里内置两种捕获能量球的方式，可以互换使用。
 //6.由于我只有5.1系统的手机，我也不知道在不同版本的手机的click和swipe函数效果如何，这个碰上了再解决吧。
-//最后修改于：	2018/1/9 18：40
+//7.需要root或者安卓7.0以上才能使用
+//最后修改于：	2018/1/9 19：00
+//9号下午，界面改变了。。。。。
 //
 var ismyself = false;
 if (ismyself) {
@@ -163,7 +165,10 @@ function takeMyself2() {
 function takeOther2() {
 
 	var right_bottom = className("android.widget.Button").desc("浇水").findOne();
+	log(right_bottom);
 	var left_top = descContains("返回").findOne();
+	log(left_top);
+
 	var filtes = [];
 	var left = 0;
 	var right = device.width;
@@ -172,12 +177,31 @@ function takeOther2() {
 
 	log(left + "-" + top + "-" + right + "-" + bottom);
 
-	var all = descMatches('^\\d+g$').boundsInside(left, top, right, bottom).untilFind();
-	toastLog("能量球个数：" + all.size());
+	var all = descMatches("^\\d+g$").boundsInside(left, top, right, bottom).untilFind();
+	toastLog("能量球个数：" + (all.size() - 1));
 	all.each(function(x) {
-		r.click(x.bounds().centerX(), x.bounds().centerY());
-		log("点击->" + x);
+		filtes.push(x);
 	});
+
+	filtes.sort(function(o1, o2) {
+		return distance(o1) - distance(o2);
+	});
+
+	if (filtes.length > 0) {
+		filtes.splice(0, 1);
+	}
+
+	for (var i = 0; i < filtes.length; i++) {
+		//原有的click无效
+		r.click(filtes[i].bounds().centerX(), filtes[i].bounds().centerY());
+		log("点击->" + filtes[i]);
+		sleep(2000);
+	}
+
+
+	function distance(o) {
+		return Math.pow((o.bounds().top - top), 2) + Math.pow((o.bounds().right - right), 2);
+	}
 
 }
 
@@ -187,12 +211,15 @@ function Robot() {
 		r = new RootAutomator();
 	}
 
-	this.click = function(x, y) {
+	this.click = function(x, y, duration) {
+		if (duration == undefined) {
+			duration = 50;
+		}
 		if (r == null) {
-			press(x, y, 50);
+			press(x, y, duration);
 		} else {
 			r.touchDown(x, y);
-			sleep(10);
+			sleep(duration);
 			r.touchUp();
 		}
 	}
