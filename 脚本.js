@@ -10,7 +10,7 @@
 //4.申请截图时不需要点击立即开始（可能我是5.1的原因，因为系统是5.1，不能设置不再显示，否则直接崩）
 //5.这里内置两种捕获能量球的方式，可以互换使用。
 //6.由于我只有5.1系统的手机，我也不知道在不同版本的手机的click和swipe函数效果如何，这个碰上了再解决吧。
-//最后修改于：	2018/1/9 14：00
+//最后修改于：2018/1/9 18：35
 //
 var ismyself = false;
 if (ismyself) {
@@ -47,7 +47,7 @@ toastLog("成功进入");
 sleep(3000);
 
 
-takeMyself();
+takeMyself2();
 toastLog("收取自己的能量完毕");
 sleep(5000);
 
@@ -65,7 +65,7 @@ while (1) {
 		break;
 	}
 	r.swipe(device.width / 2, device.height * 2 / 3, device.width / 2, device.height * 1 / 3);
-	sleep(5000);
+	sleep(3000);
 }
 
 
@@ -116,41 +116,41 @@ function takeOther() {
 function takeMyself2() {
 
 	var right_bottom = className("android.widget.Button").desc("攻略").findOne();
+	log(right_bottom);
 	var left_top = descContains("返回").findOne();
-	toastLog("ok");
+	log(left_top);
+
 	var filtes = [];
 	var left = 0;
 	var right = device.width;
 	var top = left_top.bounds().bottom;
 	var bottom = right_bottom.bounds().top;
 
-	toastLog(left + "-" + top + "-" + right + "-" + bottom);
+	log(left + "-" + top + "-" + right + "-" + bottom);
 
-	var all = descMatches('^\\d+g$').boundsInside(left, top, right, bottom).untilFind();
-	toastLog("能量球个数：" + all.size());
+	var all = descMatches("^\\d+g$").boundsInside(left, top, right, bottom).untilFind();
+	toastLog("能量球个数：" + (all.size() - 1));
 	all.each(function(x) {
 		filtes.push(x);
 	});
-	var minIndex = 0;
-	var minDistance = 0x7fffffff;
-	for (var i = 0; i < filtes.length; i++) {
-		if (distance(filtes[i]) < minDistance) {
-			minIndex = i;
-			minDistance = distance(filtes[i]);
-		}
-	}
+
+	filtes.sort(function(o1, o2) {
+		return distance(o1) - distance(o2);
+	});
 
 	if (filtes.length > 0) {
-		filtes.splice(minIndex, 1);
+		filtes.splice(0, 1);
 	}
 
 	for (var i = 0; i < filtes.length; i++) {
-		filtes[i].click();
+		//原有的click无效
+		r.click(filtes[i].bounds().centerX(), filtes[i].bounds().centerY());
+		log("点击->" + filtes[i]);
 	}
 
 
 	function distance(o) {
-		return Math.pow((o.bounds().centerY() - top), 2) + Math.pow((o.bounds().centerX() - right_bottom.bounds().left), 2);
+		return Math.pow((o.bounds().top - top), 2) + Math.pow((o.bounds().right - right), 2);
 	}
 
 }
@@ -166,12 +166,14 @@ function takeOther2() {
 	var top = left_top.bounds().bottom;
 	var bottom = right_bottom.bounds().top;
 
-	toastLog(left + "-" + top + "-" + right + "-" + bottom);
+	log(left + "-" + top + "-" + right + "-" + bottom);
 
 	var all = descMatches('^\\d+g$').boundsInside(left, top, right, bottom).untilFind();
 	toastLog("能量球个数：" + all.size());
-	all.click();
-	//==>descMatches('^\\d+g$').boundsInside(left, top, right, bottom).click();
+	all.each(function(x) {
+		r.click(x.bounds().centerX(), x.bounds().centerY());
+		log("点击->" + x);
+	});
 
 }
 
