@@ -10,7 +10,7 @@
 //4.申请截图时不需要点击立即开始（可能我是5.1的原因，因为系统是5.1，不能设置不再显示，否则直接崩）
 //5.这里内置两种捕获能量球的方式，可以互换使用。
 //6.由于我只有5.1系统的手机，我也不知道在不同版本的手机的click和swipe函数效果如何，这个碰上了再解决吧。
-//最后修改于：2018/1/9 18：35
+//最后修改于：	2018/1/9 18：40
 //
 var ismyself = false;
 if (ismyself) {
@@ -25,6 +25,10 @@ if (ismyself) {
 sleep(3000);
 var temp = images.read("sdcard/take.png");
 var end = images.read("sdcard/end.png");
+if (temp == null || end == null) {
+	toastLog("缺少图片文件，请仔细查看使用方法的第一条！！！！！");
+	exit();
+}
 var r = new Robot();
 var dh = 40 * device.height / 720;
 
