@@ -160,7 +160,7 @@ function take(desc) {
 	}
 	if (debug) {
 		files.ensureDir(debug_dir);
-		images.captureScreen("sdcard/" + new Date().getTime() + ".png");
+		images.captureScreen(debug_dir + new Date().getTime() + ".png");
 	}
 	for (var i = 0; i < filtes.length; i++) {
 		//原有的click无效
