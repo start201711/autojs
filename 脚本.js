@@ -11,10 +11,17 @@
 //5.这里内置两种捕获能量球的方式，可以互换使用。
 //6.由于我只有5.1系统的手机，我也不知道在不同版本的手机的click和swipe函数效果如何，这个碰上了再解决吧。
 //7.需要root或者安卓7.0以上才能使用
-//最后修改于：	2018/1/9 19：00
-//9号下午，界面改变了。。。。。
+//最后修改于：	2018/1/10 12:20
+//修改说明：
+//1.	9号下午，界面改变了。。。。。，
+//2.	发现进入蚂蚁森林的时候，脚本过快，加了延迟
+//3.	修改swipe，使得滑动更稳
+//4.	目前仍可能出现点击坐标偏移问题
+//
 //
 var ismyself = false;
+var debug = true;
+var debug_dir = "sdcard/debug/take/";
 if (ismyself) {
 	var unlock = require("unlock"); //解锁模块
 	unlock();
@@ -121,7 +128,11 @@ function takeOther() {
 
 function takeMyself2() {
 
-	var right_bottom = className("android.widget.Button").desc("攻略").findOne();
+	take("攻略");
+}
+
+function take(desc) {
+	var right_bottom = className("android.widget.Button").desc(desc).findOne();
 	log(right_bottom);
 	var left_top = descContains("返回").findOne();
 	log(left_top);
@@ -133,7 +144,7 @@ function takeMyself2() {
 	var bottom = right_bottom.bounds().top;
 
 	log(left + "-" + top + "-" + right + "-" + bottom);
-
+	sleep(2000);
 	var all = descMatches("^\\d+g$").boundsInside(left, top, right, bottom).untilFind();
 	toastLog("能量球个数：" + (all.size() - 1));
 	all.each(function(x) {
@@ -147,10 +158,14 @@ function takeMyself2() {
 	if (filtes.length > 0) {
 		filtes.splice(0, 1);
 	}
-
+	if (debug) {
+		files.ensureDir(debug_dir);
+		images.captureScreen("sdcard/" + new Date().getTime() + ".png");
+	}
 	for (var i = 0; i < filtes.length; i++) {
 		//原有的click无效
-		r.click(filtes[i].bounds().centerX(), filtes[i].bounds().centerY());
+		r.clickCenter(filtes[i], 100);
+		sleep(2000);
 		log("点击->" + filtes[i]);
 	}
 
@@ -158,51 +173,11 @@ function takeMyself2() {
 	function distance(o) {
 		return Math.pow((o.bounds().top - top), 2) + Math.pow((o.bounds().right - right), 2);
 	}
-
 }
-
 
 function takeOther2() {
 
-	var right_bottom = className("android.widget.Button").desc("浇水").findOne();
-	log(right_bottom);
-	var left_top = descContains("返回").findOne();
-	log(left_top);
-
-	var filtes = [];
-	var left = 0;
-	var right = device.width;
-	var top = left_top.bounds().bottom;
-	var bottom = right_bottom.bounds().top;
-
-	log(left + "-" + top + "-" + right + "-" + bottom);
-
-	var all = descMatches("^\\d+g$").boundsInside(left, top, right, bottom).untilFind();
-	toastLog("能量球个数：" + (all.size() - 1));
-	all.each(function(x) {
-		filtes.push(x);
-	});
-
-	filtes.sort(function(o1, o2) {
-		return distance(o1) - distance(o2);
-	});
-
-	if (filtes.length > 0) {
-		filtes.splice(0, 1);
-	}
-
-	for (var i = 0; i < filtes.length; i++) {
-		//原有的click无效
-		r.click(filtes[i].bounds().centerX(), filtes[i].bounds().centerY());
-		log("点击->" + filtes[i]);
-		sleep(2000);
-	}
-
-
-	function distance(o) {
-		return Math.pow((o.bounds().top - top), 2) + Math.pow((o.bounds().right - right), 2);
-	}
-
+	take("浇水");
 }
 
 function Robot() {
@@ -223,6 +198,9 @@ function Robot() {
 			r.touchUp();
 		}
 	}
+	this.clickCenter = function(b, duration) {
+		this.click(b.bounds().centerX(), b.bounds().centerY(), duration);
+	}
 	this.swipe = function(x1, y1, x2, y2, duration) {
 		if (duration == undefined) {
 			duration = 200;
@@ -230,14 +208,21 @@ function Robot() {
 		if (r == null) {
 			swipe(x1, y1, x2, y2, duration);
 		} else {
+			var n = 30;
+			var dx = (x2 - x1) / n;
+			var dy = (y2 - y1) / n;
+			var xc = 0;
+			var yc = 0;
 			r.touchDown(x1, y1);
-			sleep(duration);
-			r.touchMove(x2, y2);
-			sleep(duration);
+			for (var i = 0; i < n; i++) {
+				r.touchMove(x1 + xc, y1 + yc);
+				xc += 6 * dx * i * (n - i) / Math.pow(n, 2);
+				yc += 6 * dy * i * (n - i) / Math.pow(n, 2);
+				sleep(duration / n);
+			}
 			r.touchUp();
 		}
 	}
-
 }
 
 /*******************解锁模块代码实例，我把自己的代码乱改***********************/
