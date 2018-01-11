@@ -21,7 +21,7 @@
 //	添加一个例外情况（绿色能量）
 //	修改流程使之更完善，现在基本上没有问题了
 //
-var isMyself = true;
+var isMyself = false;
 var debug = true;
 var debug_dir = "sdcard/debug/take/";
 if (debug) {
