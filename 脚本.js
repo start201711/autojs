@@ -1,43 +1,45 @@
 //转载请注明来自酷安用户@群主让我注册 
 //根据此代码修改，请注明根据酷安@群主让我注册 修改
-//脚本随时更新！！！
+//注意，脚本随时更新，记得经常来看看脚本是不是又更新了
 //下载地址：https://github.com/start201711/autojs?files=1
+//设备要求：需要root或者安卓7.0以上才能使用
 //使用方法：
 //1.准备工作：需要两个小图片
 //（a）好友的列表右上角的绿色的小图标，命名为take.png
 //（b）好友列表最下方的爱心捐献图标，命名为end.png
-//这两个图片放在sdcard根目录下
-//2.设置为定时脚本，一般早上7：40差不多了把
-//3.如果不会写解锁屏幕代码，请勿设置手机锁屏密码；如果会，请自行编写解锁模块的代码（最后有示例）
-//4.申请截图时不需要点击立即开始（可能我是5.1的原因，因为系统是5.1，不能设置不再显示，否则直接崩）
-//5.这里内置两种捕获能量球的方式，可以互换使用。
+//这两个图片都放在sdcard根目录下
+//2.直接启动脚本即可，不用点自己打开支付宝。（一般的话，设置为定时脚本，每天定时执行，无需看护！！）
+//3.如果手机没有解锁屏幕，是运行不了的。所以需要自己想办法解锁屏幕。
+//  如果会写解锁屏幕代码，请自行编写解锁模块的代码（本文最后有示例）；如果不会写解锁屏幕代码，请勿设置手机锁屏密码；
+//4.申请截图的权限时，不需要手动点击"立即开始"，脚本会自行点击"立即开始"。
+//5.这里内置两种抓取能量球的方式，可以互换使用。
 //6.由于我只有5.1系统的手机，我也不知道在不同版本的手机的click和swipe函数效果如何，这个碰上了再解决吧。
-//7.需要root或者安卓7.0以上才能使用
-//最后修改于：	2018/1/10 12:20
+// 可能在7.0上面的没有那么"自然"
+//最后修改于：2018-01-11 12:48:35
 //修改说明：
-//1.	9号下午，界面改变了。。。。。，
-//2.	发现进入蚂蚁森林的时候，脚本过快，加了延迟
-//3.	修改swipe，使得滑动更稳
-//4.	目前仍可能出现点击坐标偏移问题
+//	2018-01-11 12:28:29 
+//	添加一个例外情况（绿色能量）
+//	修改流程使之更完善，现在基本上没有问题了
 //
-//
-var ismyself = false;
+var isMyself = true;
 var debug = true;
 var debug_dir = "sdcard/debug/take/";
-if (ismyself) {
+if (debug) {
+	files.ensureDir(debug_dir);
+}
+if (isMyself) {
 	var unlock = require("unlock"); //解锁模块
 	unlock();
-} else {
-	device.wakeUpIfNeeded(); //这种方式请勿设置锁屏密码
-}
-if (ismyself) {
 	shell("pm enable com.eg.android.AlipayGphone", true);
+} else {
+	device.wakeUp(); //这种方式请勿设置锁屏密码
 }
+
 sleep(3000);
 var temp = images.read("sdcard/take.png");
 var end = images.read("sdcard/end.png");
 if (temp == null || end == null) {
-	toastLog("缺少图片文件，请仔细查看使用方法的第一条！！！！！");
+	toastLog("缺少图片文件，请仔细查看使用方法的第一条！！！");
 	exit();
 }
 var r = new Robot();
@@ -45,6 +47,7 @@ var dh = 40 * device.height / 720;
 
 
 new java.lang.Thread(function() {
+
 	classNameContains("Button").textContains("立即开始").click();
 }).start();
 
@@ -53,18 +56,19 @@ if (!requestScreenCapture()) {
 	toast("请求截图失败");
 	exit();
 }
-
+toastLog("即将收取蚂蚁森林能量，请勿操作！");
 
 launch("com.eg.android.AlipayGphone");
+waitForPackage("com.eg.android.AlipayGphone");
 while (!click("蚂蚁森林"));
 className("android.widget.Button").desc("攻略").waitFor();
-toastLog("成功进入");
+toastLog("成功进入蚂蚁森林");
 sleep(3000);
 
 
 takeMyself2();
 toastLog("收取自己的能量完毕");
-sleep(5000);
+sleep(3000);
 
 
 while (1) {
@@ -73,7 +77,7 @@ while (1) {
 		takeOther2();
 		sleep(2000);
 		idContains("h5_tv_nav_back").click();
-		sleep(5000);
+		sleep(3000);
 	}
 
 	if (findImage(captureScreen(), end)) {
@@ -85,52 +89,23 @@ while (1) {
 
 
 toastLog("收取能量完毕");
-if (ismyself) {
+idContains("h5_tv_nav_back").click();
+if (isMyself) {
 	shell("pm disable com.eg.android.AlipayGphone", true);
 }
 exit();
 
-/*********************************各种函数*********************************************/
-
-function takeMyself() {
-	var a = descContains("线下支付").find();
-	if (a) {
-		toastLog("能量球个数1：" + a.size());
-		a.each(function(x) {
-			log(x.bounds());
-			r.click(x.bounds().centerX(), x.bounds().centerY() - dh);
-		});
-	}
-	var b = descContains("行走").find();
-	if (b) {
-		log("能量球个数2：" + b.size());
-		b.each(function(x) {
-			toastLog(x.bounds());
-			r.click(x.bounds().centerX(), x.bounds().centerY() - dh);
-		});
-	}
-
-	//todo 	需要添加更多的情况
-}
-
-function takeOther() {
-	className("android.widget.Button").desc("浇水").waitFor();
-	sleep(3000);
-	var a = descContains("  可收取").find();
-	if (a) {
-		toastLog("能量球个数：" + a.size());
-		a.each(function(x) {
-			toastLog(x.bounds());
-			r.click(x.bounds().centerX(), x.bounds().centerY() - dh);
-			sleep(1000);
-		});
-	}
-}
+/******************收取能量函数********************/
 
 
 function takeMyself2() {
 
 	take("攻略");
+}
+
+function takeOther2() {
+
+	take("浇水");
 }
 
 function take(desc) {
@@ -147,8 +122,8 @@ function take(desc) {
 
 	log(left + "-" + top + "-" + right + "-" + bottom);
 	sleep(2000);
-	var all = descMatches("^\\d+g$").boundsInside(left, top, right, bottom).untilFind();
-	toastLog("能量球个数：" + (all.size() - 1));
+	var all = descMatches("^(绿色能量|\\d+g)$").boundsInside(left, top, right, bottom).untilFind();
+	toastLog("找到" + (all.size() - 1) + "个能量球");
 	all.each(function(x) {
 		filtes.push(x);
 	});
@@ -161,7 +136,6 @@ function take(desc) {
 		filtes.splice(0, 1);
 	}
 	if (debug) {
-		files.ensureDir(debug_dir);
 		images.captureScreen(debug_dir + new Date().getTime() + ".png");
 	}
 	for (var i = 0; i < filtes.length; i++) {
@@ -177,10 +151,7 @@ function take(desc) {
 	}
 }
 
-function takeOther2() {
 
-	take("浇水");
-}
 
 function Robot() {
 	var r = null;
@@ -226,6 +197,45 @@ function Robot() {
 		}
 	}
 }
+
+
+/**********************应该会废弃下面的方法**************************/
+
+// 	var a = descContains("线下支付").find();
+// 	if (a) {
+// 		toastLog("能量球个数1：" + a.size());
+// 		a.each(function(x) {
+// 			log(x.bounds());
+// 			r.click(x.bounds().centerX(), x.bounds().centerY() - dh);
+// 		});
+// 	}
+// 	var b = descContains("行走").find();
+// 	if (b) {
+// 		log("能量球个数2：" + b.size());
+// 		b.each(function(x) {
+// 			toastLog(x.bounds());
+// 			r.click(x.bounds().centerX(), x.bounds().centerY() - dh);
+// 		});
+// 	}
+
+// 	//todo 	需要添加更多的情况
+// }
+
+// function takeOther() {
+// 	className("android.widget.Button").desc("浇水").waitFor();
+// 	sleep(3000);
+// 	var a = descContains("  可收取").find();
+// 	if (a) {
+// 		toastLog("能量球个数：" + a.size());
+// 		a.each(function(x) {
+// 			toastLog(x.bounds());
+// 			r.click(x.bounds().centerX(), x.bounds().centerY() - dh);
+// 			sleep(1000);
+// 		});
+// 	}
+// }
+
+
 
 /*******************解锁模块代码实例，我把自己的代码乱改***********************/
 //下面的代码放另一个文件里面
