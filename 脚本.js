@@ -2,12 +2,10 @@
 //根据此代码修改，请注明根据酷安@群主让我注册 修改
 //注意，脚本随时更新，记得经常来看看脚本是不是又更新了
 //下载地址：https://github.com/start201711/autojs?files=1
-//设备要求：需要root或者安卓7.0以上才能使用
+//设备要求：需要root或者安卓7.0以上，以及autojs软件版本3.0版本以上才能使用
 //使用方法：
-//1.准备工作：需要两个小图片
-//（a）好友的列表右上角的绿色的小图标，命名为take.png
-//（b）好友列表最下方的爱心捐献图标，命名为end.png
-//这两个图片都放在sdcard根目录下
+//1.准备工作：只需要一张小图片
+//即：好友的列表右上角的绿色的小图标，命名为take.png，放在sdcard根目录下
 //2.直接启动脚本即可，不用点自己打开支付宝。（一般的话，设置为定时脚本，每天定时执行，无需看护！！）
 //3.如果手机没有解锁屏幕，是运行不了的。所以需要自己想办法解锁屏幕。
 //  如果会写解锁屏幕代码，请自行编写解锁模块的代码（本文最后有示例）；如果不会写解锁屏幕代码，请勿设置手机锁屏密码；
@@ -15,14 +13,17 @@
 //5.这里内置两种抓取能量球的方式，可以互换使用。
 //6.由于我只有5.1系统的手机，我也不知道在不同版本的手机的click和swipe函数效果如何，这个碰上了再解决吧。
 // 可能在7.0上面的没有那么"自然"
-//最后修改于：2018-01-11 12:48:35
+//最后修改于：2018-01-12 00:28:13
 //修改说明：
 //	2018-01-11 12:28:29 
 //	添加一个例外情况（绿色能量）
 //	修改流程使之更完善，现在基本上没有问题了
+//	2018-01-11 23:16:25
+//	不再需要结束图片
 //
 var isMyself = false;
 var debug = true;
+
 var debug_dir = "sdcard/debug/take/";
 if (debug) {
 	files.ensureDir(debug_dir);
@@ -37,8 +38,8 @@ if (isMyself) {
 
 sleep(3000);
 var temp = images.read("sdcard/take.png");
-var end = images.read("sdcard/end.png");
-if (temp == null || end == null) {
+
+if (temp == null) {
 	toastLog("缺少图片文件，请仔细查看使用方法的第一条！！！");
 	exit();
 }
@@ -80,7 +81,7 @@ while (1) {
 		sleep(3000);
 	}
 
-	if (findImage(captureScreen(), end)) {
+	if (descContains("爱心捐赠").classNameContains("android.widget.Image").findOne().bounds().top < device.height) {
 		break;
 	}
 	r.swipe(device.width / 2, device.height * 2 / 3, device.width / 2, device.height * 1 / 3);
