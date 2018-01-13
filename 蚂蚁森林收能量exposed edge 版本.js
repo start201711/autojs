@@ -32,7 +32,7 @@
 //	2018-01-13 20:38:14
 //	1.添加两种分辨率
 //
-var isAuthor = true;
+var isAuthor = false;
 var debug = true;
 
 var debug_dir = "sdcard/debug/take/";
