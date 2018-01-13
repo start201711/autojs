@@ -1,4 +1,3 @@
-
 //转载请注明来自酷安用户@群主让我注册 
 //根据此代码修改，请注明根据酷安@群主让我注册 修改
 //注意，脚本随时更新，记得经常来看看脚本是不是又更新了
@@ -6,7 +5,7 @@
 //设备要求：需要root或者安卓7.0以上，以及autojs软件版本3.0版本以上才能使用
 //使用方法：
 //1.准备工作：只需要一张小图片
-//即：可以收取好友能量的时候，好友右上角那个绿色的小手图像，只要能包括绿色小手的最小图像就行，
+//即：可以收取好友能量的时候，好友右上角那个绿色的小手图像，只要能包括绿色小手的图像就行，
 //不能使用大的图像，命名为take.png，放在sdcard根目录下
 //2.直接运行脚本即可，不用点自己打开支付宝。（一般的话，设置为定时脚本，每天定时执行，无需看护！！）
 //3.如果手机没有解锁屏幕，是运行不了的。所以需要自己想办法解锁屏幕。
@@ -18,7 +17,7 @@
 //8.本脚本可以配合tasker或者exposed edge的定时任务使用。
 // 可能在7.0上面的没有那么"自然"
 //
-//最后修改于：2018-01-11 12:48:35
+//最后修改于：2018-01-13 20:42:03
 //修改说明：
 //	2018-01-11 12:28:29 
 //	1.添加一个例外情况（绿色能量）
@@ -30,8 +29,10 @@
 //	2.如果没有take.png将尝试下载远程的图像
 //	3.添加root权限检查
 //	4.对于已root设备，使用shell命令强制开启autojs的无障碍服务
+//	2018-01-13 20:38:14
+//	1.添加两种分辨率
 //
-var isAuthor = false;
+var isAuthor = true;
 var debug = true;
 
 var debug_dir = "sdcard/debug/take/";
@@ -67,7 +68,18 @@ var temp = images.read("sdcard/take.png");
 
 if (!temp) {
 	toastLog("缺少图片文件，请仔细查看\n使用方法的第一条！！！");
-	temp = images.load("https://raw.githubusercontent.com/start201711/autojs/master/take.png");
+	switch (device.width) {
+		case 1080:
+			temp = images.load("https://raw.githubusercontent.com/start201711/autojs/master/take.png");
+			break;
+		case 720:
+			temp = images.load("https://raw.githubusercontent.com/start201711/autojs/master/take720p.png");
+			break;
+		default:
+			temp = null;
+			break;
+	}
+
 	if (!temp) {
 		toastLog("尝试下载take.png失败,脚本停止运行");
 		exit();
