@@ -15,9 +15,9 @@
 //6.由于我只有5.1系统的手机，我也不知道在不同版本的手机的press和swipe函数效果如何，这个碰上了再解决吧。
 //7.建议第一次使用本脚本的时候，打开开发者模式的显示指针位置和触摸操作，可以直观的看到整个收取能量过程
 //8.本脚本可以配合tasker或者exposed edge的定时任务使用。
-// 可能在7.0上面的没有那么"自然"
+//  可能在7.0上面滑动没有那么"自然"
 //
-//最后修改于：2018-01-14 11:35:39
+//最后修改于：22018-01-14 11:57:20
 //修改说明：
 //	2018-01-11 12:28:29 
 //	1.添加一个例外情况（绿色能量）
@@ -36,7 +36,7 @@
 //	1.添加进森林的兼容方案
 //	2.新发现部分人的swipe、press没用，这个我也无能为力了
 //
-var isAuthor = true;
+var isAuthor = false;
 var debug = true;
 
 var debug_dir = "sdcard/debug/take/";
@@ -109,9 +109,14 @@ toastLog("即将收取蚂蚁森林能量，请勿操作！");
 launch("com.eg.android.AlipayGphone");
 waitForPackage("com.eg.android.AlipayGphone");
 
-//有人进不去森林，但是查看布局分析是没问题的,这里使用一个兼容的办法
+//有人说进不去森林，但是查看布局分析是没问题的
+//这里使用一个兼容的办法clickSenlin(); 
 //如果你的进不去，你可以把下面的这句换成while (!click("蚂蚁森林"));
-clickSenlin();//兼容方法
+//如果还不行，你换成r.press(x,y);//x,y是需要点击的森林的位置。
+//如果再不行，那你换成Tap(x,y);//x,y是需要点击的森林的位置。
+//如果再再不行，那就shell("input  tap x y");//x,y是需要点击的森林的位置。
+//如果再再再不行，去支付宝充把火麒麟就好了（#滑稽）
+clickSenlin(); //兼容方法
 
 
 className("android.widget.Button").desc("攻略").waitFor();
@@ -121,7 +126,7 @@ sleep(3000);
 
 takeMyself2();
 toastLog("收取自己的能量完毕");
-sleep(3000);
+sleep(2000);
 
 
 while (1) {
