@@ -36,7 +36,7 @@
 //	1.添加进森林的兼容方案
 //	2.新发现部分人的swipe、press没用，这个我也无能为力了
 //
-var isAuthor = true;//如果你不是作者，这里务必为false，不然各种报错。
+var isAuthor = false;//如果你不是作者，这里务必为false，不然各种报错。
 var debug = true;
 
 var debug_dir = "sdcard/debug/take/";
