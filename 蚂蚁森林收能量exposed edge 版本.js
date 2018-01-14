@@ -17,7 +17,7 @@
 //8.本脚本可以配合tasker或者exposed edge的定时任务使用。
 // 可能在7.0上面的没有那么"自然"
 //
-//最后修改于：2018-01-13 20:42:03
+//最后修改于：2018-01-14 11:35:39
 //修改说明：
 //	2018-01-11 12:28:29 
 //	1.添加一个例外情况（绿色能量）
@@ -28,11 +28,15 @@
 //	1.将click换成press
 //	2.如果没有take.png将尝试下载远程的图像
 //	3.添加root权限检查
-//	4.对于已root设备，使用shell命令强制开启autojs的无障碍服务
+//	4.对于已root设备，将会使用shell命令强制开启autojs的无障碍服务
 //	2018-01-13 20:38:14
 //	1.添加两种分辨率
+//	2.增加默认的按压时间，由50改为100
+//	2018-01-14 11:28:32
+//	1.添加进森林的兼容方案
+//	2.新发现部分人的swipe、press没用，这个我也无能为力了
 //
-var isAuthor = false;
+var isAuthor = true;
 var debug = true;
 
 var debug_dir = "sdcard/debug/take/";
@@ -104,7 +108,12 @@ toastLog("即将收取蚂蚁森林能量，请勿操作！");
 
 launch("com.eg.android.AlipayGphone");
 waitForPackage("com.eg.android.AlipayGphone");
-while (!click("蚂蚁森林"));
+
+//有人进不去森林，但是查看布局分析是没问题的,这里使用一个兼容的办法
+//如果你的进不去，你可以把下面的这句换成while (!click("蚂蚁森林"));
+clickSenlin();//兼容方法
+
+
 className("android.widget.Button").desc("攻略").waitFor();
 toastLog("成功进入蚂蚁森林");
 sleep(3000);
@@ -117,7 +126,10 @@ sleep(3000);
 
 while (1) {
 	for (var p = findImage(captureScreen(), temp); p; p = findImage(captureScreen(), temp)) {
-		r.press(p.x, p.y + dh);
+		if (debug) {
+			toastLog("进入好友的森林");
+		}
+		r.press(p.x, p.y + dh, 100);
 		takeOther2();
 		sleep(1000);
 		idContains("h5_tv_nav_back").click();
@@ -201,7 +213,13 @@ function take(desc) {
 	}
 }
 
-
+function clickSenlin() {
+	var b = text("蚂蚁森林").findOne().bounds();
+	var a = idContains("home_app_view").untilFind().filter(o => {
+		return o.bounds().contains(b);
+	});
+	while (!a[0].click());
+}
 
 function Robot() {
 	var r = null;
@@ -216,7 +234,7 @@ function Robot() {
 
 	this.press = function(x, y, duration) {
 		if (duration == undefined) {
-			duration = 50;
+			duration = 100;
 		}
 		if (r == null) {
 			press(x, y, duration);
@@ -237,13 +255,11 @@ function Robot() {
 			var n = 30;
 			var dx = (x2 - x1) / n;
 			var dy = (y2 - y1) / n;
-			var xc = 0;
-			var yc = 0;
 			r.touchDown(x1, y1);
 			for (var i = 0; i < n; i++) {
-				r.touchMove(x1 + xc, y1 + yc);
-				xc += 6 * dx * i * (n - i) / Math.pow(n, 2);
-				yc += 6 * dy * i * (n - i) / Math.pow(n, 2);
+				r.touchMove(x1, y1);
+				x1 += 6 * dx * i * (n - i) / Math.pow(n, 2);
+				y1 += 6 * dy * i * (n - i) / Math.pow(n, 2);
 				sleep(duration / n);
 			}
 			r.touchUp();
