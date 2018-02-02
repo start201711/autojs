@@ -18,9 +18,10 @@
 //8.本脚本可以配合tasker或者exposed edge的定时任务使用。
 //  可能在7.0上面滑动没有那么"自然"
 //
-//最后修改于：2018-01-24
+//最后修改于：2018-02-02 23:47:17
 //修改说明：
-//	2018-01-11 12:28:29 //	1.添加一个例外情况（绿色能量）
+//	2018-01-11 12:28:29 
+//	1.添加一个例外情况（绿色能量）
 //	2.修改流程使之更完善，现在基本上没有问题了
 //	2018-01-11 23:16:25
 //	1.不再需要结束图片
@@ -38,60 +39,62 @@
 //	2018-01-23 01:40:57
 //	1.添加进入更多好友的代码
 //	2.发现更多的问题。。。。
-//
+//	2018-02-02 00:00:16
+//	1.尝试修复部分手机不点击、不滑动的bug。
+//  2.关闭调试
 var isAuthor = false; //如果你不是作者，这里务必为false，不然各种报错。
-var debug = true;
-var useShell = false; //使用shell命令执行模拟输入tap、swipe动作。除非你你的滑动不了，或者点能量球点不了，才把它改为true
+var debug = false; //开启调试，会截图保存到本地
+var useShell = false; //使用shell命令执行模拟输入tap、swipe动作。如果你的滑动不了或者点能量球点不了，测试把它改为true
 var debug_dir = "sdcard/debug/take/";
 if (debug) {
-  files.ensureDir(debug_dir);
+	files.ensureDir(debug_dir);
 }
 
 //检测手机是否已root，如果root，下面的代码会自动开启autojs的无障碍服务！！！
 if (isRoot()) {
-  var s = shell("settings get secure enabled_accessibility_services", true).result.replace(/\n/, "");
-  log(s);
-  var stardust = "com.stardust.scriptdroid/com.stardust.scriptdroid.accessibility.AccessibilityService";
-  if (s.indexOf("stardust") == "-1") {
-    var code = shell("settings put secure enabled_accessibility_services " + s + ":" + stardust, true).code;
-    if (code) {
-      toastLog("开启无障碍服务异常");
-    }
-  }
-  shell("settings put secure accessibility_enabled 1", true);
+	var s = shell("settings get secure enabled_accessibility_services", true).result.replace(/\n/, "");
+	log(s);
+	if (s.indexOf("stardust") == "-1") {
+		var stardust = "com.stardust.scriptdroid/com.stardust.scriptdroid.accessibility.AccessibilityService";
+		var code = shell("settings put secure enabled_accessibility_services " + s + ":" + stardust, true).code;
+		if (code) {
+			toastLog("尝试开启无障碍服务异常");
+		}
+	}
+	shell("settings put secure accessibility_enabled 1", true);
 }
 
 if (isAuthor) {
-  var unlock = require("unlock"); //解锁模块
-  unlock();
-  shell("pm enable com.eg.android.AlipayGphone", true);
+	var unlock = require("unlock"); //解锁模块
+	unlock();
+	shell("pm enable com.eg.android.AlipayGphone", true);
 } else {
-  //请自己想办法让手机屏幕解锁可以进行操作
-  device.wakeUp();
+	//请自己想办法让手机屏幕解锁可以进行操作
+	device.wakeUp();
 }
 
 sleep(3000);
 var temp = images.read("sdcard/take.png");
 
 if (!temp) {
-  toastLog("缺少图片文件，请仔细查看\n使用方法的第一条！！！");
-  switch (device.width) {
-    case 1080:
-      temp = images.load("https://raw.githubusercontent.com/start201711/autojs/master/take.png");
-      break;
-    case 720:
-      temp = images.load("https://raw.githubusercontent.com/start201711/autojs/master/take720p.png");
-      break;
-    default:
-      temp = null;
-      break;
-  }
+	toastLog("缺少图片文件，请仔细查看\n使用方法的第一条！！！");
+	switch (device.width) {
+		case 1080:
+		temp = images.load("https://raw.githubusercontent.com/start201711/autojs/master/take.png");
+		break;
+		case 720:
+		temp = images.load("https://raw.githubusercontent.com/start201711/autojs/master/take720p.png");
+		break;
+		default:
+		temp = null;
+		break;
+	}
 
-  if (!temp) {
-    toastLog("尝试下载take.png失败,脚本停止运行");
-    exit();
-  }
-  toastLog("现在将尝试使用别人的图片，分辨率可能不匹配，脚本可能无法正常执行");
+	if (!temp) {
+		toastLog("尝试下载take.png失败,脚本停止运行");
+		exit();
+	}
+	toastLog("现在将尝试使用别人的图片，分辨率可能不匹配，脚本可能无法正常执行");
 }
 var r = new Robot();
 var dh = 40 * device.height / 720;
@@ -99,13 +102,13 @@ var dh = 40 * device.height / 720;
 
 //向系统申请截图时，自动确认
 new java.lang.Thread(function() {
-  classNameContains("Button").textContains("立即开始").click();
+	classNameContains("Button").textContains("立即开始").click();
 }).start();
 
 
 if (!requestScreenCapture()) {
-  toast("请求截图失败");
-  exit();
+	toast("请求截图失败，脚本退出");
+	exit();
 }
 toastLog("即将收取蚂蚁森林能量，请勿操作！");
 
@@ -138,14 +141,14 @@ sleep(2000);
 
 //通知tasker下一次运行脚本的时间，全天候自动挂机
 if (isAuthor) {
-  var loop = require("loop");
-  loop(); //将等待下一次时间写入文件中给tasker
-  sleep(2000);
+	var loop = require("loop");
+	loop(); //将等待下一次时间写入文件中给tasker
+	sleep(2000);
 }
 
-var btn = descContains("查看更多好友").findOne();
+var more = descContains("查看更多好友").findOne();
 
-r.pressCenter(btn);
+r.pressCenter(more);
 
 sleep(5000);
 takeMore();
@@ -156,7 +159,7 @@ idContains("h5_tv_nav_back").click();
 
 
 if (isAuthor) {
-  shell("pm disable com.eg.android.AlipayGphone", true);
+	shell("pm disable com.eg.android.AlipayGphone", true);
 }
 exit();
 
@@ -164,173 +167,155 @@ exit();
 
 
 function takeInRank() {
-  takeOthers("爱心捐赠");
+	takeOthers("爱心捐赠");
 }
 
 
 function takeMore() {
-  takeOthers("没有更多了")
+	takeOthers("没有更多了")
 }
 
 function takeOthers(end) {
-  while (1) {
-    for (var p = findImage(captureScreen(), temp); p; p = findImage(captureScreen(), temp)) {
-      if (debug) {
-        toastLog("进入好友的森林");
-      }
-      r.press(device.width/2, p.y + dh, 100);
-      takeOther();
-      sleep(1000);
-      idContains("h5_tv_nav_back").click();
-      sleep(2000);
-    }
-    if (debug) {
-      images.captureScreen(debug_dir + new Date().getTime() + ".png");
-    }
-    //if (descContains(end).findOne().bounds().top < device.height) {
-    //toastLog("break");
-    //break;
-    //}
-    if (descContains(end).find().size() > 0) {
-      if (descContains(end).findOne().bounds().top < device.height) {
-        break;
-      }
+	while (1) {
+		for (var p = findImage(captureScreen(), temp); p; p = findImage(captureScreen(), temp)) {
+			if (debug) {
+				toastLog("进入好友的森林");
+			}
+			r.press(device.width / 2, p.y + dh, 100);
+			takeOther();
+			sleep(1000);
+			idContains("h5_tv_nav_back").click();
+			sleep(2000);
+		}
+		if (debug) {
+			images.captureScreen(debug_dir + new Date().getTime() + ".png");
+		}
 
-    }
-    r.swipe(device.width / 2, device.height * 2 / 3, device.width / 2, device.height * 1 / 3);
+		if (descContains(end).find().size() > 0) {
+			if (descContains(end).findOne().bounds().top < device.height) {
+				break;
+			}
 
-    sleep(2000);
-  }
+		}
+		r.swipe(device.width / 2, device.height * 2 / 3, device.width / 2, device.height * 1 / 3);
+
+		sleep(2000);
+	}
 
 }
 
 function takeMyself() {
 
-  take("攻略");
+	take("攻略");
 }
 
 function takeOther() {
 
-  take("浇水");
+	take("浇水");
 }
 
 function take(desc) {
-  var right_bottom = className("android.widget.Button").desc(desc).findOne();
-  log(right_bottom);
-  var left_top = descContains("返回").findOne();
-  log(left_top);
+	var right_bottom = className("android.widget.Button").desc(desc).findOne();
+	log(right_bottom);
+	var left_top = descContains("返回").findOne();
+	log(left_top);
 
-  var filtes = [];
-  var left = 0;
-  var right = device.width;
-  var top = left_top.bounds().bottom;
-  var bottom = right_bottom.bounds().top;
+	var filtes = [];
+	var left = 0;
+	var right = device.width;
+	var top = left_top.bounds().bottom;
+	var bottom = right_bottom.bounds().top;
 
-  log(left + "-" + top + "-" + right + "-" + bottom);
-  sleep(2000);
-  var all = descMatches("^(绿色能量|\\d+g)$").boundsInside(left, top, right, bottom).untilFind();
-  toastLog("找到" + (all.size() - 1) + "个能量球");
-  all.each(function(x) {
-    filtes.push(x);
-  });
+	log(left + "-" + top + "-" + right + "-" + bottom);
+	sleep(2000);
+	var all = descMatches("^(绿色能量|\\d+g)$").boundsInside(left, top, right, bottom).untilFind();
+	toastLog("找到" + (all.size() - 1) + "个能量球");
+	all.each(function(x) {
+		filtes.push(x);
+	});
 
-  filtes.sort(function(o1, o2) {
-    return distance(o1) - distance(o2);
-  });
+	filtes.sort(function(o1, o2) {
+		return distance(o1) - distance(o2);
+	});
 
-  if (filtes.length > 0) {
-    filtes.splice(0, 1);
-  }
-  if (debug) {
-    images.captureScreen(debug_dir + new Date().getTime() + ".png");
-  }
-  for (var i = 0; i < filtes.length; i++) {
-    r.pressCenter(filtes[i], 100);
-    sleep(1000);
-    log("点击->" + filtes[i]);
-  }
+	if (filtes.length > 0) {
+		filtes.splice(0, 1);
+	}
+	if (debug) {
+		images.captureScreen(debug_dir + new Date().getTime() + ".png");
+	}
+	for (var i = 0; i < filtes.length; i++) {
+		r.pressCenter(filtes[i], 100);
+		sleep(1000);
+		log("点击->" + filtes[i]);
+	}
 
 
-  function distance(o) {
-    return Math.pow((o.bounds().top - top), 2) + Math.pow((o.bounds().right - right), 2);
-  }
+	function distance(o) {
+		return Math.pow((o.bounds().top - top), 2) + Math.pow((o.bounds().right - right), 2);
+	}
 }
 
 function clickSenlin() {
-  var b = text("蚂蚁森林").findOne().bounds();
-  var a = idContains("home_app_view").untilFind().filter(o => {
-    return o.bounds().contains(b);
-  });
-  while (!a[0].click());
+	var b = text("蚂蚁森林").findOne().bounds();
+	var a = idContains("home_app_view").untilFind().filter(o => {
+		return o.bounds().contains(b);
+	});
+	while (!a[0].click());
 }
 
 function Robot() {
-  var r = null;
-  if (device.sdkInt < 24) {
-    if (isRoot()) {
-      r = new RootAutomator();
-    } else {
-      toastLog("本脚本需要android7.0以上或者已root才能使用");
-      exit();
-    }
-  }
-  var _useShellCmd = useShell;
+	var r = null;
+	if (device.sdkInt < 24) {
+		if (isRoot()) {
+			r = new RootAutomator();
+		} else {
+			toastLog("本脚本需要android7.0以上或者已root才能使用");
+			exit();
+		}
+	}
+	var _useShellCmd = useShell;
 
-  this.press = function(x, y, duration) {
-    if (duration == undefined) {
-      duration = 100;
-    }
-    if (r == null) {
-      press(x, y, duration);
-    } else {
-      if (_useShellCmd) {
-        shell("input tap " + x + " " + y, true);
-      } else {
-        r.press(x, y, duration);
-      }
+	this.press = function(x, y, duration) {
+		if (duration == undefined) {
+			duration = 100;
+		}
+		if (r == null) {
+			press(x, y, duration);
+		} else if (_useShellCmd) {
+			Swipe(x, y, x, y, duration);
+		} else {
+			r.press(x, y, duration);
+		}
+	}
 
-    }
-  }
-
-  this.pressCenter = function(b, duration) {
-    this.press(b.bounds().centerX(), b.bounds().centerY(), duration);
-  }
-  this.swipe = function(x1, y1, x2, y2, duration) {
-    if (duration == undefined) {
-      duration = 200;
-    }
-    if (r == null) {
-      swipe(x1, y1, x2, y2, duration);
-    } else {
-      if (_useShellCmd) {
-        toastLog(shell("input swipe " + x1 + " " + y1 + " " + x2 + " " + y2 + " " + duration, true));
-      } else {
-        var n = 30;
-        var dx = (x2 - x1) / n;
-        var dy = (y2 - y1) / n;
-        r.touchDown(x1, y1);
-        for (var i = 0; i < n; i++) {
-          r.touchMove(x1, y1);
-          x1 += 6 * dx * i * (n - i) / Math.pow(n, 2);
-          y1 += 6 * dy * i * (n - i) / Math.pow(n, 2);
-          sleep(duration / n);
-        }
-        r.touchUp();
-      }
-    }
-  }
+	this.pressCenter = function(obj, duration) {
+		this.press(obj.bounds().centerX(), obj.bounds().centerY(), duration);
+	}
+	this.swipe = function(x1, y1, x2, y2, duration) {
+		if (duration == undefined) {
+			duration = 200;
+		}
+		if (r == null) {
+			swipe(x1, y1, x2, y2, duration);
+		} else if (_useShellCmd) {
+			Swipe(x1, y1, x2, y2, duration);
+		} else {
+			r.swipe(x1, y1, x2, y2, duration);
+		}
+	}
 }
 
 
 
 function isRoot() {
-  var bool = false;
-  try {
-    bool = new java.io.File("/system/bin/su").exists() || new java.io.File("/system/xbin/su").exists();
-  } catch (e) {
-    print(e);
-  }
-  return bool;
+	var bool = false;
+	try {
+		bool = new java.io.File("/system/bin/su").exists() || new java.io.File("/system/xbin/su").exists();
+	} catch (e) {
+		print(e);
+	}
+	return bool;
 }
 
 
@@ -360,7 +345,7 @@ function isRoot() {
 // 	sleep(1000)
 // 	ra.press(760, 360);
 // 	sleep(2000);
-// } 
+// } 
 
 
 // module.exports = unlock;
