@@ -23,7 +23,7 @@
 //	2018-02-02 23:54:44
 //	1.关闭调试，避开软件新版本的错误
 var isMyself = false;
-var debug = true;
+var debug = false;
 
 var debug_dir = "sdcard/debug/take/";
 if (debug) {
