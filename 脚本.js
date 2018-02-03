@@ -22,10 +22,11 @@
 //	不再需要结束图片
 //	2018-02-02 23:54:44
 //	1.关闭调试，避开软件新版本的错误
+//      2.修复路径问题
 var isMyself = false;
 var debug = false;
 
-var debug_dir = "sdcard/debug/take/";
+var debug_dir = "/sdcard/debug/take/";
 if (debug) {
 	files.ensureDir(debug_dir);
 }
@@ -38,7 +39,7 @@ if (isMyself) {
 }
 
 sleep(3000);
-var temp = images.read("sdcard/take.png");
+var temp = images.read("/sdcard/take.png");
 
 if (temp == null) {
 	toastLog("缺少图片文件，请仔细查看使用方法的第一条！！！");
