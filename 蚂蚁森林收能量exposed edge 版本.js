@@ -37,10 +37,11 @@
 //	2.新发现部分人的swipe、press没用，这个我也无能为力了
 //	2018-02-02 23:54:44
 //	1.关闭调试，避开软件新版本出现的错误
+//      2.修复路径问题
 var isAuthor = false;//如果你不是作者，这里务必为false，不然各种报错。
 var debug = false;
 
-var debug_dir = "sdcard/debug/take/";
+var debug_dir = "/sdcard/debug/take/";
 if (debug) {
 	files.ensureDir(debug_dir);
 }
@@ -69,7 +70,7 @@ if (isAuthor) {
 }
 
 sleep(3000);
-var temp = images.read("sdcard/take.png");
+var temp = images.read("/sdcard/take.png");
 
 if (!temp) {
 	toastLog("缺少图片文件，请仔细查看\n使用方法的第一条！！！");
