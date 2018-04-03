@@ -124,7 +124,7 @@ function takeOther() {
 }
 
 function takeMyself() {
-    desc("浇水").findOne(5000);
+    desc("攻略").findOne(5000);
     let start = idContains("tree_energy").findOne(2000);
     take();
     let selector = descMatches("还剩\n?00:0[12]");
@@ -178,7 +178,7 @@ function take() {
 
 function into() {
     let w = id("com.alipay.android.phone.openplatform:id/app_text").text("蚂蚁森林").findOne(8000);
-    return w && w.parent() && w.parent().click() && idContains("tree_energy").findOne(20 * 1000);
+    return w && w.parent() && w.parent().click() && desc("攻略").findOne(20 * 1000);
 }
 
 function next() {
