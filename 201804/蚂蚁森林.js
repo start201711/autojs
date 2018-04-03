@@ -15,7 +15,8 @@ if (!files.exists(_path)) {
     throw new java.lang.Exception("小手图片不存在");
 }
 const temp = images.read(_path);
-let script = require("Script");
+let Script = require("Script");
+let script = new Script();
 let save = require("SaveXml");
 main();
 exit();
@@ -190,19 +191,4 @@ function next() {
         //shell("am broadcast -a autojs.next.time --es next " + min, true);
     }
     return min;
-}
-
-function Script() {
-    let _ra = device.sdkInt < 24 ? new RootAutomator() : null;
-    this.press = function (x, y) {
-        if (_ra) {
-            _ra.press(x, y, 100);
-            return true;
-        } else {
-            return press(x, y, 100);
-        }
-    };
-    this.pressCenter = function (o) {
-        return this.press(o.bounds().centerX(), o.bounds().centerY());
-    }
 }

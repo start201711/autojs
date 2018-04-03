@@ -1,0 +1,1 @@
+engines.execScriptFile("/sdcard/脚本/蚂蚁森林/蚂蚁森林.js");
