@@ -1,7 +1,7 @@
 const pkg = "com.eg.android.AlipayGphone";
 const max_try_count = 5; //最大尝试次数
 const max_run_time = 100 * 1000; //脚本运行最长时间
-let single = require("/sdcard/脚本/modules/SingleScript");
+let single = require("SingleScript");
 single.enqueue();
 let enable = require("enable");
 let unlock = require("unlock");

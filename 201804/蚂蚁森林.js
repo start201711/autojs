@@ -10,7 +10,7 @@ enable();
 unlock();
 
 
-const _path = engines.myEngine().cwd() + "/take.png";
+const _path = "take.png";
 if (!files.exists(_path)) {
     throw new java.lang.Exception("小手图片不存在");
 }
@@ -23,9 +23,12 @@ exit();
 
 function main() {
     events.observeKey();
-    events.onceKeyDown("volume_up", function (event) {
+    events.onceKeyDown("volume_up", function () {
         toastLog("脚本停止运行");
         exit();
+    });
+    events.on("exit", function () {
+        KeyCode(26);
     });
     toastLog("即将收取蚂蚁森林能量，请勿操作\n按音量上键停止脚本");
     shell("pm enable " + pkg, true);
@@ -188,7 +191,7 @@ function next() {
             min = Math.min(min, value);
         });
         log("距离下一次收取还有" + min + "分钟");
-        //shell("am broadcast -a autojs.next.time --es next " + min, true);
+        //shell("am broadcast -function.js autojs.next.time --es next " + min, true);
     }
     return min;
 }
