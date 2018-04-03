@@ -7,7 +7,7 @@
 3. 在config.js文件里面配置解锁密码
 4. 在edge里面设置执行shell，设置定时任务
 ```
-    fp="/storage/sdcard0/script/task.js"
+    fp="你的蚂蚁森林.js全路径"
     am start -n com.stardust.scriptdroid/.external.open.RunIntentActivity -d file://${fp} -t application/x-javascript
 ```
 
