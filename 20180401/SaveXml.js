@@ -1,0 +1,45 @@
+module.exports = function(dir, name) {
+    dir = dir || "/sdacrd/debug/";
+    files.ensureDir(dir);
+    name = name || new Date().getTime() + ".txt";
+    var r = visibleToUser(true).findOne();
+    while (r.parent()) {
+        r = r.parent();
+    }
+    //shell("uiautomator dump "+dir+name,true);
+    var txt = xml(r, 0);
+    files.write(dir + name, txt);
+}
+
+
+function xml(node, i) {
+    var self = t(i) + "<Node " + formatNode(node);
+    if (node.childCount() == 0) {
+        self += "/>";
+    } else {
+        self += ">";
+        i++;
+        for (var j = 0; j < node.childCount(); j++) {
+            self += "\n" + xml(node.child(j), i);
+        }
+        i--;
+        self += "\n" + t(i) + "</Node>";
+    }
+    return self;
+
+}
+
+function t(n) {
+    var t = "";
+    for (var i = 0; i < n; i++) {
+        t += "\t";
+    }
+    return t;
+}
+
+
+function formatNode(node) {
+    var str = node.toString();
+    //todo more
+    return str;
+}
