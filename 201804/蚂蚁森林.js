@@ -28,7 +28,7 @@ function main() {
         exit();
     });
     events.on("exit", function () {
-        KeyCode(26);
+       // KeyCode(26);//脚本退出时息屏，如果有此需要，请取消注释
     });
     toastLog("即将收取蚂蚁森林能量，请勿操作\n按音量上键停止脚本");
     shell("pm enable " + pkg, true);
