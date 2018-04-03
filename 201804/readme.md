@@ -21,6 +21,7 @@ engines.execScriptFile("/sdcard/脚本/蚂蚁森林/蚂蚁森林.js");
 
 5. 如果会使用tasker，把next函数里面的shell发送广播命令取消注释，
 然后在tasker里面添加收到广播事件，循环执行脚本
+![image](https://github.com/start201711/autojs/blob/master/201804/ScreenShot/Screenshot_2018-04-03-19-55-21.jpg)
 
 ### 蚂蚁庄园脚本
 1. 配置几个固定的点击坐标
@@ -37,3 +38,4 @@ engines.execScriptFile("/sdcard/脚本/蚂蚁森林/蚂蚁森林.js");
 - [x] 增加SingleScript模块，限制同一时间只能运行一个脚本
 - [x] 优化查找能量球的方法，添加能量统计功能
 - [ ] 目前captureScreen有可能返回为null，导致异常，期待autojs开发者的修复。
+- [ ] 一切都在慢慢完善中……
