@@ -3,7 +3,7 @@ const max_try_count = 5; //最大尝试次数
 const max_run_time = 200 * 1000; //脚本运行最长时间
 let single = require("SingleScript");
 single.enqueue();
-
+sleep(1000);
 let enable = require("enable");
 let unlock = require("unlock");
 enable();
@@ -28,7 +28,7 @@ function main() {
         exit();
     });
     events.on("exit", function () {
-       // KeyCode(26);//脚本退出时息屏，如果有此需要，请取消注释
+        // KeyCode(26);//脚本退出时息屏，如果有此需要，请取消注释
     });
     toastLog("即将收取蚂蚁森林能量，请勿操作\n按音量上键停止脚本");
     shell("pm enable " + pkg, true);
