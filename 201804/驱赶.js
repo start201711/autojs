@@ -68,7 +68,7 @@ function doSth() {
         toast("请求截图失败，脚本退出");
         exit();
     }
-
+    //这里需要设置偷吃东西的两只鸡的位置
     for (let i = 0; i < 10; i++) {
         script.press(218, 851, 100);
         sleep(500);
@@ -76,7 +76,7 @@ function doSth() {
         sleep(500);
     }
     sleep(3000);
-    shell("pm disable com.eg.android.AlipayGphone", true);
+    shell("am force-stop " + pkg, true);
     toastLog("本轮完毕！");
     sleep(3000);
     exit();

@@ -59,12 +59,13 @@ function prepare() {
 function doSth() {
 
     for (let i = 0; i < 2; i++) {
+        //这里需要设置投食按钮的位置
         script.press(595, 1150, 20);
         sleep(30);
     }
     log("投食完毕");
     sleep(3000);
-    shell("pm disable com.eg.android.AlipayGphone", true);
+    shell("am force-stop " + pkg, true);
     toastLog("本轮完毕！");
     sleep(3000);
 }
