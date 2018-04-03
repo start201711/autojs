@@ -39,7 +39,7 @@ let SingleScript = {};
 
 SingleScript.enqueue = function (b) {
     let n = this.size();
-    if (n !== 0) {
+    if (n != 0) {
         log(str + "前面还有" + n + "个任务，排队中");
     }
     _register.invoke(null, engine);
