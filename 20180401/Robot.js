@@ -52,7 +52,7 @@ function Robot(max_retry_times) {
     };
 
     this.clickCenter = function (b) {
-        var rect = b.bounds();
+        let rect = b.bounds();
         return this.click(rect.centerX(), rect.centerY());
     };
 

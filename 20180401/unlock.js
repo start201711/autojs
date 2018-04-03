@@ -32,7 +32,7 @@
 //sleep(3000);
 auto(); // 自动打开无障碍服务
 
-var options = require("./config.js")
+let options = require("./config.js");
 
 // 所有操作都是竖屏
 
@@ -43,7 +43,7 @@ var options = require("./config.js")
  * @param options
  */
 function start(options) {
-    var isScreenOn = device.isScreenOn(); // 屏幕是否点亮
+    let isScreenOn = device.isScreenOn(); // 屏幕是否点亮
     if (!isScreenOn) {
         log("唤醒");
         device.wakeUp();
@@ -51,12 +51,12 @@ function start(options) {
     }
     this.checkModule();
 
-    var Robot = require("./Robot.js");
-    var robot = new Robot(options.max_retry_times);
+    let Robot = require("./Robot.js");
+    let robot = new Robot(options.max_retry_times);
 
 
-    var Secure = require("./Secure.js");
-    var secure = new Secure(robot, options.max_retry_times);
+    let Secure = require("./Secure.js");
+    let secure = new Secure(robot, options.max_retry_times);
     secure.openLock(options.password, options.pattern_size);
 }
 
@@ -77,4 +77,4 @@ module.exports = function() {
 
     sleep(3000);
     start(options);
-}
+};

@@ -1,9 +1,9 @@
 module.exports = function() {
     try {
-        var enabled = shell("settings get secure enabled_accessibility_services", true).result.replace(/\n/, "");
+        let enabled = shell("settings get secure enabled_accessibility_services", true).result.replace(/\n/, "");
         if (enabled.indexOf("stardust") < 0) {
-            var stardust = "com.stardust.scriptdroid/com.stardust.scriptdroid.accessibility.AccessibilityService";
-            var ret = shell("settings put secure enabled_accessibility_services " + enabled + ":" + stardust, true);
+            let stardust = "com.stardust.scriptdroid/com.stardust.scriptdroid.accessibility.AccessibilityService";
+            let ret = shell("settings put secure enabled_accessibility_services " + enabled + ":" + stardust, true);
             if (ret.code) {
                 throw new java.lang.Exception();
             } else {
@@ -14,4 +14,4 @@ module.exports = function() {
     } catch (e) {
         toastLog("尝试开启无障碍服务异常");
     }
-}
+};

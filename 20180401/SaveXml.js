@@ -2,24 +2,24 @@ module.exports = function(dir, name) {
     dir = dir || "/sdacrd/debug/";
     files.ensureDir(dir);
     name = name || new Date().getTime() + ".txt";
-    var r = visibleToUser(true).findOne();
+    let r = visibleToUser(true).findOne();
     while (r.parent()) {
         r = r.parent();
     }
     //shell("uiautomator dump "+dir+name,true);
-    var txt = xml(r, 0);
+    let txt = xml(r, 0);
     files.write(dir + name, txt);
-}
+};
 
 
 function xml(node, i) {
-    var self = t(i) + "<Node " + formatNode(node);
-    if (node.childCount() == 0) {
+    let self = t(i) + "<Node " + formatNode(node);
+    if (node.childCount() === 0) {
         self += "/>";
     } else {
         self += ">";
         i++;
-        for (var j = 0; j < node.childCount(); j++) {
+        for (let j = 0; j < node.childCount(); j++) {
             self += "\n" + xml(node.child(j), i);
         }
         i--;
@@ -30,8 +30,8 @@ function xml(node, i) {
 }
 
 function t(n) {
-    var t = "";
-    for (var i = 0; i < n; i++) {
+    let t = "";
+    for (let i = 0; i < n; i++) {
         t += "\t";
     }
     return t;
@@ -39,7 +39,6 @@ function t(n) {
 
 
 function formatNode(node) {
-    var str = node.toString();
     //todo more
-    return str;
+    return node.toString();
 }

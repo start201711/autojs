@@ -16,46 +16,46 @@ importClass(java.io.File);
 importClass(java.lang.ClassLoader);
 importClass(java.lang.Class);
 importClass(com.stardust.autojs.rhino.AndroidClassLoader);
-var parent = context.getClassLoader();
-var engine = engines.myEngine();
-var clz = Class.forName("com.stardust.autojs.engine.ScriptEngine", true, parent);
-var cls;
+let parent = context.getClassLoader();
+let engine = engines.myEngine();
+let clz = Class.forName("com.stardust.autojs.engine.ScriptEngine", true, parent);
+let cls;
 try {
     cls = Class.forName("com.stardust.TaskQueue", true, parent);
 } catch (e) {
-    var loader = new AndroidClassLoader(parent, new File(context.getCacheDir(), "jar"));
-    var path = files.path("./SingleScript.jar");
+    let loader = new AndroidClassLoader(parent, new File(context.getCacheDir(), "jar"));
+    let path = files.path("./SingleScript.jar");
     log(path);
     loader.loadJar(new File(path));
     cls = loader.loadClass("com.stardust.TaskQueue");
 }
 
-var _register = cls.getMethod("register", clz);
-var _unregister = cls.getMethod("unregister", clz);
-var _taskCount = cls.getMethod("getTaskCount");
-var str = engine + "";
+let _register = cls.getMethod("register", clz);
+let _unregister = cls.getMethod("unregister", clz);
+let _taskCount = cls.getMethod("getTaskCount");
+let str = engine + "";
 str = str.substring(str.lastIndexOf("@"));
-var SingleScript = {}
+let SingleScript = {};
 
-SingleScript.enqueue = function(b) {
-    var n = this.size();
-    if (n != 0) {
+SingleScript.enqueue = function (b) {
+    let n = this.size();
+    if (n !== 0) {
         log(str + "前面还有" + n + "个任务，排队中");
     }
     _register.invoke(null, engine);
     log(str + "\t任务执行中");
-    if (b != true) {
-        events.on("exit", function() {
+    if (b !== true) {
+        events.on("exit", function () {
             SingleScript.dequeue();
         });
     }
-}
-SingleScript.dequeue = function() {
+};
+SingleScript.dequeue = function () {
     _unregister.invoke(null, engine);
     log(str + "\t出队");
 };
-SingleScript.size = function() {
+SingleScript.size = function () {
     return _taskCount.invoke(null);
-}
+};
 
 module.exports = SingleScript;
