@@ -9,6 +9,7 @@ android 7.0+或者已root的5.0+，
 1. 下载全部文件
 2. 安装[autojs](https://www.coolapk.com/apk/com.stardust.scriptdroid)、exposed edge等软件
 2. 自己截收取好友能量的小手的图片，重命名为take.png放入当前目录下
+![小手图片](https://github.com/start201711/autojs/blob/master/201804/take.png)
 3. 在config.js文件里面配置解锁密码
 4. 在exposed edge里面使用shell执行命令，设置多个定时任务
 ```
