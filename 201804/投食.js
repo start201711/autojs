@@ -8,7 +8,8 @@ let unlock = require("unlock");
 enable();
 unlock();
 
-let script = require("Script");
+let Script = require("Script");
+let script = new Script();
 
 main();
 exit();

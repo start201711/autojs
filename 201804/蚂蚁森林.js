@@ -183,7 +183,7 @@ function next() {
     if (time > 6) {
         let d = descMatches(/\d+’/).find();
         d.each(function (o) {
-            let value = parse(o.desc().match(/\d+/)[0]);
+            let value = parseInt(o.desc().match(/\d+/)[0]);
             min = Math.min(min, value);
         });
         log("距离下一次收取还有" + min + "分钟");
