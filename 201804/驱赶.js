@@ -26,7 +26,7 @@ function prepare() {
         toastLog("脚本停止运行");
         exit();
     });
-    toastLog("即将进行驱赶任务，请勿操作");
+    toastLog("即将进行驱赶任务，请勿操作\n按音量上键键停止脚本");
     shell("pm enable " + pkg, true);
     threads.start(function () {
         if (max_run_time <= 0) {
@@ -57,17 +57,6 @@ function prepare() {
 }
 
 function doSth() {
-
-    threads.start(function () {
-        let btn = classNameContains("Button").textContains("立即开始").findOne(8 * 1000);
-        btn ? btn.click() : false;
-    });
-
-
-    if (!requestScreenCapture()) {
-        toast("请求截图失败，脚本退出");
-        exit();
-    }
     //这里需要设置偷吃东西的两只鸡的位置
     for (let i = 0; i < 10; i++) {
         script.press(218, 851, 100);
