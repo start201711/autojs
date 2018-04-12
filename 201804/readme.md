@@ -6,6 +6,7 @@
 android 7.0+或者已root的5.0+，
 由于使用需要exposed edge定时任务，实际要求相当于已root 5.0+
 ### 支付宝版本10.1.15.463（就是图标带有福到-年到那个）10.1.18版本之后应该是不支持的
+### 目前应该是没卵用了，就当参考吧
 ### 自动收能量脚本
 1. 下载全部文件
 2. 安装[autojs](https://www.coolapk.com/apk/com.stardust.scriptdroid)、[exposed edge](https://play.google.com/store/apps/details?id=com.jozein.xedgepro)等软件
