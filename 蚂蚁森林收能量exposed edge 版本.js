@@ -17,7 +17,7 @@
 //8.本脚本可以配合tasker或者exposed edge的定时任务使用。
 //  可能在7.0上面滑动没有那么"自然"
 //
-//最后修改于：2018-02-03 20:45:00
+//最后修改于：2018-4-12
 //修改说明：
 //	2018-01-11 12:28:29 
 //	1.添加一个例外情况（绿色能量）
@@ -38,6 +38,8 @@
 //	2018-02-02 23:54:44
 //	1.关闭调试，避开软件新版本出现的错误
 //	2.修复路径问题
+//      2018-4-12
+//      适应支付宝的改动
 var isAuthor = false;//如果你不是作者，这里务必为false，不然各种报错。
 var debug = false;
 
@@ -192,7 +194,7 @@ function take(desc) {
 
 	log(left + "-" + top + "-" + right + "-" + bottom);
 	sleep(2000);
-	var all = descMatches("^(绿色能量|\\d+g)$").boundsInside(left, top, right, bottom).untilFind();
+	var all = descMatches("^((绿色|收集)能量|\\d+g)$").boundsInside(left, top, right, bottom).untilFind();
 	toastLog("找到" + (all.size() - 1) + "个能量球");
 	all.each(function(x) {
 		filtes.push(x);
