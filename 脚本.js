@@ -13,7 +13,7 @@
 //5.这里内置两种抓取能量球的方式，可以互换使用。
 //6.由于我只有5.1系统的手机，我也不知道在不同版本的手机的click和swipe函数效果如何，这个碰上了再解决吧。
 // 可能在7.0上面的没有那么"自然"
-//最后修改于：2018-02-02 23:54:44
+//最后修改于：2018-4-12
 //修改说明：
 //	2018-01-11 12:28:29 
 //	添加一个例外情况（绿色能量）
@@ -23,6 +23,8 @@
 //	2018-02-02 23:54:44
 //	1.关闭调试，避开软件新版本的错误
 //      2.修复路径问题
+//      2018-4-12
+//      适应支付宝的改动
 var isMyself = false;
 var debug = false;
 
@@ -125,7 +127,7 @@ function take(desc) {
 
 	log(left + "-" + top + "-" + right + "-" + bottom);
 	sleep(2000);
-	var all = descMatches("^(绿色能量|\\d+g)$").boundsInside(left, top, right, bottom).untilFind();
+	var all = descMatches("^((绿色|收集)能量|\\d+g)$").boundsInside(left, top, right, bottom).untilFind();
 	toastLog("找到" + (all.size() - 1) + "个能量球");
 	all.each(function(x) {
 		filtes.push(x);
